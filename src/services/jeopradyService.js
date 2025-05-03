@@ -1,5 +1,6 @@
 const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/jeoprady`;
 
+// Fetch all games
 const index = async () => {
   try {
     const res = await fetch(BASE_URL, {
@@ -17,6 +18,7 @@ const index = async () => {
   }
 };
 
+// Fetch one game by ID
 const show = async (id) => {
   try {
     const res = await fetch(`${BASE_URL}/${id}`, {
@@ -34,6 +36,7 @@ const show = async (id) => {
   }
 };
 
+// Create a new game
 const create = async (gameData) => {
   try {
     const res = await fetch(BASE_URL, {
@@ -56,4 +59,27 @@ const create = async (gameData) => {
   }
 };
 
-export { index, show, create };
+// Create a question for a specific game
+const createQuestion = async (gameId, questionData) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${gameId}/questions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(questionData),
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to create question');
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error creating question:', error);
+    return null;
+  }
+};
+
+export { index, show, create, createQuestion };
