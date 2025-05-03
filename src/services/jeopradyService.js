@@ -34,4 +34,26 @@ const show = async (id) => {
   }
 };
 
-export { index, show };
+const create = async (gameData) => {
+  try {
+    const res = await fetch(BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(gameData),
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to create Jeoprady game');
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error creating Jeoprady game:', error);
+    return null;
+  }
+};
+
+export { index, show, create };

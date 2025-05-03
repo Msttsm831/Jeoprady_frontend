@@ -17,6 +17,7 @@ const NavBar = () => {
 			<ul>
 			  <li><Link to='/'>HOME</Link></li>
 			  <li><Link to='/jeopardy'>Jeopardy</Link></li>
+              <li><Link to='/jeoprady/new'>New Jeoprady</Link></li>
 			  <li><Link to='/' onClick={handleSignOut}>Sign Out</Link></li>
 			</ul>
 		  ) : (
