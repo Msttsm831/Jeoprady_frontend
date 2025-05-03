@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import * as jeopardyService from '../../services/jeopardyService';
+import * as jeopardyService from '../../services/jeopradyService';
 
 export default function JeopardyListPage() {
   const [jeopardyGames, setJeopardyGames] = useState([]);

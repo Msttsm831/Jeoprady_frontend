@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import * as jeopardyService from '../../services/jeopardyService';
-
-export default function JeopardyDetailPage() {
+import * as jeopradyService from '../../services/jeopradyService'; 
+export default function JeopradyDetailPage() {
   const { id } = useParams();
   const [game, setGame] = useState(null);
 
   useEffect(() => {
     const fetchGame = async () => {
-      const data = await jeopardyService.show(id);
-      setGame(data);
+      try {
+        const data = await jeopradyService.show(id); // ✅ match function from your service
+        setGame(data);
+      } catch (error) {
+        console.error('Failed to fetch game:', error);
+      }
     };
     fetchGame();
   }, [id]);

@@ -23,7 +23,7 @@ const GameForm = ({ handleAddGame }) => {
       if (createdGame) {
         setSuccessMessage('Game created successfully!');
         setFormData({ title: '', description: '', category: 'General' });
-        handleAddGame(createdGame); // Notify parent component
+        handleAddGame(createdGame); 
       } else {
         setError('Failed to create game. Please try again.');
       }

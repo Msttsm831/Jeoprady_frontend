@@ -6,7 +6,7 @@ import Landing from './components/Landing/Landing';
 import SignInForm from './components/SignInForm/SignInForm';
 import Dashboard from './components/Dashboard/Dashboard';
 import JeopardyList from './components/JeopradyList/JeopardyList';
-import * as jeopardyService from './services/jeopardyService';
+import * as jeopardyService from './services/jeopradyService';
 import GameDetails from './components/GameDetails/GameDetails';
 import GameForm from './components/GameForm/GameForm';
 
