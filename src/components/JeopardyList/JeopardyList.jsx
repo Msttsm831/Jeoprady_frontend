@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import * as jeopardyService from '../../services/jeopardyService';
-
 
 export default function JeopardyListPage() {
   const [jeopardyGames, setJeopardyGames] = useState([]);
@@ -20,7 +20,9 @@ export default function JeopardyListPage() {
       {jeopardyGames.length ? (
         <ul>
           {jeopardyGames.map((game) => (
-            <li key={game._id}>{game.title}</li>
+            <li key={game._id}>
+              {game.title} - <Link to={`/jeopardy/${game._id}`}>View</Link>
+            </li>
           ))}
         </ul>
       ) : (

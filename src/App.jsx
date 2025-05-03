@@ -7,6 +7,7 @@ import SignInForm from './components/SignInForm/SignInForm';
 import Dashboard from './components/Dashboard/Dashboard';
 import JeopardyList from './components/JeopardyList/JeopardyList';
 import * as jeopardyService from './services/jeopardyService';
+import GameDetails from './components/GameDetails/GameDetails';
 
 import { UserContext } from './contexts/UserContext';
 
@@ -30,6 +31,7 @@ const App = () => {
         {user ? (
           <>
             <Route path='/jeopardy' element={<JeopardyList jeopardy={jeopardy} />} />
+            <Route path='/jeopardy/:id' element={<GameDetails />} /> 
           </>
         ) : (
           <>
