@@ -15,6 +15,8 @@ const QuestionForm = ({ handleAddQuestion }) => {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
+    
+    // Convert comma-separated options string into array
     const optionsArray = formData.options
       .split(',')
       .map(opt => opt.trim())
@@ -25,10 +27,15 @@ const QuestionForm = ({ handleAddQuestion }) => {
       return;
     }
 
+    if (!optionsArray.includes(formData.correctAnswer.trim())) {
+      alert('Correct answer must be one of the provided options.');
+      return;
+    }
+
     const newQuestion = {
       questionText: formData.questionText,
       options: optionsArray,
-      correctAnswer: formData.correctAnswer,
+      correctAnswer: formData.correctAnswer.trim(),
       points: Number(formData.points),
       category: formData.category
     };
@@ -97,7 +104,7 @@ const QuestionForm = ({ handleAddQuestion }) => {
         onChange={handleChange}
       />
 
-      <button type='submit'>SUBMIT QUESTION</button>
+      <button type='submit'>Submit Question</button>
     </form>
   );
 };

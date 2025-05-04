@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import * as jeopardyService from '../../services/jeopradyService';
+import QuestionForm from '../QuestionForm/QuestionForm';
 
 export default function GameDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [game, setGame] = useState(null);
   const [score, setScore] = useState(0);
-  const [answers, setAnswers] = useState({}); // { questionId: selectedAnswer }
+  const [answers, setAnswers] = useState({});
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
     const fetchGame = async () => {
@@ -17,21 +20,39 @@ export default function GameDetails() {
   }, [id]);
 
   const handleAnswer = (questionId, selectedOption, correctAnswer, points) => {
-    // Prevent answering twice
     if (answers[questionId]) return;
 
     const isCorrect = selectedOption === correctAnswer;
     if (isCorrect) {
-      setScore(prev => prev + points);
-      alert(`Correct! +${points} points`);
+      setScore((prev) => prev + points);
+      setMessage(`✅ Correct! You earned ${points} points.`);
     } else {
-      alert(`Wrong! Correct answer was: ${correctAnswer}`);
+      setMessage(`❌ Incorrect. The correct answer was: ${correctAnswer}`);
     }
 
-    setAnswers(prev => ({
+    setAnswers((prev) => ({
       ...prev,
       [questionId]: selectedOption
     }));
+
+    setTimeout(() => setMessage(''), 3000); // Clear message after 3 seconds
+  };
+
+  const handleAddQuestion = async (newQuestion) => {
+    const created = await jeopardyService.createQuestion(id, newQuestion);
+    if (created) {
+      setGame((prev) => ({
+        ...prev,
+        questions: [...prev.questions, created],
+      }));
+    }
+  };
+
+  const handleDeleteGame = async () => {
+    const success = await jeopardyService.deleteGame(id);
+    if (success) {
+      navigate('/jeopardy');
+    }
   };
 
   if (!game) return <p>Loading game details...</p>;
@@ -41,6 +62,15 @@ export default function GameDetails() {
       <h1>{game.title}</h1>
       <p><strong>Description:</strong> {game.description || 'No description provided'}</p>
       <h3>Total Score: {score}</h3>
+      {message && <p style={{ color: message.includes('Correct') ? 'green' : 'red' }}>{message}</p>}
+      <button onClick={handleDeleteGame} style={{ marginBottom: '20px' }}>
+        Delete Game
+      </button>
+
+      <section>
+        <h2>Add a Question</h2>
+        <QuestionForm handleAddQuestion={handleAddQuestion} />
+      </section>
 
       {game.questions?.length ? (
         <div>

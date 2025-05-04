@@ -9,14 +9,12 @@ import JeopardyList from './components/JeopradyList/JeopardyList';
 import * as jeopardyService from './services/jeopradyService';
 import GameDetails from './components/GameDetails/GameDetails';
 import GameForm from './components/GameForm/GameForm';
-
 import { UserContext } from './contexts/UserContext';
 
 const App = () => {
   const { user } = useContext(UserContext);
   const [jeopardy, setJeopardy] = useState([]);
-
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAllJeopardys = async () => {
@@ -31,6 +29,17 @@ const App = () => {
     navigate('/jeopardy');
   };
 
+  const handleDeleteGame = async (id) => {
+    const confirmed = window.confirm('Are you sure you want to delete this game?');
+    if (!confirmed) return;
+
+    const deleted = await jeopardyService.deleteGame(id);
+    if (deleted) {
+      setJeopardy(prev => prev.filter(game => game._id !== id));
+      navigate('/jeopardy');
+    }
+  };
+
   return (
     <>
       <NavBar />
@@ -40,7 +49,7 @@ const App = () => {
           <>
             <Route path='/jeopardy' element={<JeopardyList jeopardy={jeopardy} />} />
             <Route path='/jeoprady/new' element={<GameForm handleAddGame={handleAddGame} />} />
-            <Route path='/jeopardy/:id' element={<GameDetails />} /> 
+            <Route path='/jeopardy/:id' element={<GameDetails handleDeleteGame={handleDeleteGame} />} />
           </>
         ) : (
           <>

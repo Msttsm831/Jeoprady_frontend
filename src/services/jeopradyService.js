@@ -82,4 +82,25 @@ const createQuestion = async (gameId, questionData) => {
   }
 };
 
-export { index, show, create, createQuestion };
+// Delete a game by ID
+const deleteGame = async (id) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to delete Jeoprady game');
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error deleting Jeoprady game:', error);
+    return null;
+  }
+};
+
+export { index, show, create, createQuestion, deleteGame };
