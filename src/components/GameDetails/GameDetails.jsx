@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import * as jeopardyService from '../../services/jeopradyService';
 import QuestionForm from '../QuestionForm/QuestionForm';
+import { UserContext } from '../../contexts/UserContext';
 
 export default function GameDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(UserContext);
   const [game, setGame] = useState(null);
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -18,6 +20,9 @@ export default function GameDetails() {
     };
     fetchGame();
   }, [id]);
+
+  const isGameOwner =
+    user && game?.author && String(user._id) === String(game.author._id);
 
   const handleAnswer = (questionId, selectedOption, correctAnswer, points) => {
     if (answers[questionId]) return;
@@ -35,7 +40,7 @@ export default function GameDetails() {
       [questionId]: selectedOption
     }));
 
-    setTimeout(() => setMessage(''), 3000); // Clear message after 3 seconds
+    setTimeout(() => setMessage(''), 3000);
   };
 
   const handleAddQuestion = async (newQuestion) => {
@@ -63,14 +68,19 @@ export default function GameDetails() {
       <p><strong>Description:</strong> {game.description || 'No description provided'}</p>
       <h3>Total Score: {score}</h3>
       {message && <p style={{ color: message.includes('Correct') ? 'green' : 'red' }}>{message}</p>}
-      <button onClick={handleDeleteGame} style={{ marginBottom: '20px' }}>
-        Delete Game
-      </button>
 
-      <section>
-        <h2>Add a Question</h2>
-        <QuestionForm handleAddQuestion={handleAddQuestion} />
-      </section>
+      {isGameOwner && (
+        <button onClick={handleDeleteGame} style={{ marginBottom: '20px' }}>
+          Delete Game
+        </button>
+      )}
+
+      {isGameOwner && (
+        <section>
+          <h2>Add a Question</h2>
+          <QuestionForm handleAddQuestion={handleAddQuestion} />
+        </section>
+      )}
 
       {game.questions?.length ? (
         <div>
