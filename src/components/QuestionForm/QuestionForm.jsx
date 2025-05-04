@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import * as jeopardyService from '../../services/jeopradyService';
 
 const QuestionForm = ({ handleAddQuestion }) => {
   const [formData, setFormData] = useState({
@@ -9,14 +11,38 @@ const QuestionForm = ({ handleAddQuestion }) => {
     category: ''
   });
 
+  const { jeopardyId, questionId } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchGame = async () => {
+      try {
+        if (jeopardyId && questionId) {
+          const game = await jeopardyService.show(jeopardyId);
+          const existingQuestion = game.questions.find(q => q._id === questionId);
+          if (existingQuestion) {
+            setFormData({
+              questionText: existingQuestion.questionText,
+              options: existingQuestion.options.join(', '),
+              correctAnswer: existingQuestion.correctAnswer,
+              points: existingQuestion.points,
+              category: existingQuestion.category
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load question for editing:', err);
+      }
+    };
+    fetchGame();
+  }, [jeopardyId, questionId]);
+
   const handleChange = (evt) => {
     setFormData({ ...formData, [evt.target.name]: evt.target.value });
   };
 
-  const handleSubmit = (evt) => {
+  const handleSubmit = async (evt) => {
     evt.preventDefault();
-    
-    // Convert comma-separated options string into array
     const optionsArray = formData.options
       .split(',')
       .map(opt => opt.trim())
@@ -27,29 +53,31 @@ const QuestionForm = ({ handleAddQuestion }) => {
       return;
     }
 
-    if (!optionsArray.includes(formData.correctAnswer.trim())) {
-      alert('Correct answer must be one of the provided options.');
-      return;
-    }
-
-    const newQuestion = {
+    const questionData = {
       questionText: formData.questionText,
       options: optionsArray,
-      correctAnswer: formData.correctAnswer.trim(),
+      correctAnswer: formData.correctAnswer,
       points: Number(formData.points),
       category: formData.category
     };
 
-    handleAddQuestion(newQuestion);
-
-    // Reset form
-    setFormData({
-      questionText: '',
-      options: '',
-      correctAnswer: '',
-      points: 100,
-      category: ''
-    });
+    try {
+      if (jeopardyId && questionId) {
+        await jeopardyService.updateQuestion(jeopardyId, questionId, questionData);
+        navigate(`/jeopardy/${jeopardyId}`);
+      } else {
+        handleAddQuestion(questionData);
+        setFormData({
+          questionText: '',
+          options: '',
+          correctAnswer: '',
+          points: 100,
+          category: ''
+        });
+      }
+    } catch (error) {
+      console.error('Error submitting question:', error);
+    }
   };
 
   return (
@@ -104,7 +132,7 @@ const QuestionForm = ({ handleAddQuestion }) => {
         onChange={handleChange}
       />
 
-      <button type='submit'>Submit Question</button>
+      <button type='submit'>{questionId ? 'Update' : 'Submit'} Question</button>
     </form>
   );
 };

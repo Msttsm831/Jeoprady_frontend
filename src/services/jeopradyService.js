@@ -6,11 +6,7 @@ const index = async () => {
     const res = await fetch(BASE_URL, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
-
-    if (!res.ok) {
-      throw new Error('Failed to fetch Jeoprady games');
-    }
-
+    if (!res.ok) throw new Error('Failed to fetch Jeoprady games');
     return res.json();
   } catch (error) {
     console.error('Error fetching Jeoprady games:', error);
@@ -24,11 +20,7 @@ const show = async (id) => {
     const res = await fetch(`${BASE_URL}/${id}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
-
-    if (!res.ok) {
-      throw new Error('Failed to fetch Jeoprady game detail');
-    }
-
+    if (!res.ok) throw new Error('Failed to fetch Jeoprady game detail');
     return res.json();
   } catch (error) {
     console.error('Error fetching Jeoprady game:', error);
@@ -47,11 +39,7 @@ const create = async (gameData) => {
       },
       body: JSON.stringify(gameData),
     });
-
-    if (!res.ok) {
-      throw new Error('Failed to create Jeoprady game');
-    }
-
+    if (!res.ok) throw new Error('Failed to create Jeoprady game');
     return res.json();
   } catch (error) {
     console.error('Error creating Jeoprady game:', error);
@@ -70,11 +58,7 @@ const createQuestion = async (gameId, questionData) => {
       },
       body: JSON.stringify(questionData),
     });
-
-    if (!res.ok) {
-      throw new Error('Failed to create question');
-    }
-
+    if (!res.ok) throw new Error('Failed to create question');
     return res.json();
   } catch (error) {
     console.error('Error creating question:', error);
@@ -82,25 +66,38 @@ const createQuestion = async (gameId, questionData) => {
   }
 };
 
-// Delete a game by ID
-const deleteGame = async (id) => {
+// Delete a Jeoprady game
+const deleteGame = async (gameId) => {
   try {
-    const res = await fetch(`${BASE_URL}/${id}`, {
+    const res = await fetch(`${BASE_URL}/${gameId}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
-
-    if (!res.ok) {
-      throw new Error('Failed to delete Jeoprady game');
-    }
-
-    return res.json();
+    if (!res.ok) throw new Error('Failed to delete game');
+    return true;
   } catch (error) {
-    console.error('Error deleting Jeoprady game:', error);
-    return null;
+    console.error('Error deleting game:', error);
+    return false;
   }
 };
 
-export { index, show, create, createQuestion, deleteGame };
+// Delete a question from a Jeoprady game
+const deleteQuestion = async (gameId, questionId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${gameId}/questions/${questionId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    if (!res.ok) throw new Error('Failed to delete question');
+    return true;
+  } catch (error) {
+    console.error('Error deleting question:', error);
+    return false;
+  }
+};
+
+export { index, show, create, createQuestion, deleteGame, deleteQuestion };

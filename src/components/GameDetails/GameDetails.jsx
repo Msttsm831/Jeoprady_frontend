@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import * as jeopardyService from '../../services/jeopradyService';
 import QuestionForm from '../QuestionForm/QuestionForm';
 import { UserContext } from '../../contexts/UserContext';
@@ -8,117 +8,100 @@ export default function GameDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
+
   const [game, setGame] = useState(null);
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState({});
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    const fetchGame = async () => {
-      const data = await jeopardyService.show(id);
-      setGame(data);
-    };
-    fetchGame();
-  }, [id]);
+  const isGameOwner = user && game?.author?._id === user._id;
 
-  const isGameOwner =
-    user && game?.author && String(user._id) === String(game.author._id);
+  useEffect(() => {
+    jeopardyService.show(id).then(setGame);
+  }, [id]);
 
   const handleAnswer = (questionId, selectedOption, correctAnswer, points) => {
     if (answers[questionId]) return;
 
-    const isCorrect = selectedOption === correctAnswer;
-    if (isCorrect) {
-      setScore((prev) => prev + points);
-      setMessage(`✅ Correct! You earned ${points} points.`);
-    } else {
-      setMessage(`❌ Incorrect. The correct answer was: ${correctAnswer}`);
-    }
-
-    setAnswers((prev) => ({
-      ...prev,
-      [questionId]: selectedOption
-    }));
-
+    const correct = selectedOption === correctAnswer;
+    setAnswers({ ...answers, [questionId]: selectedOption });
+    setScore((prev) => prev + (correct ? points : 0));
+    setMessage(correct ? `✅ +${points} points` : `❌ Correct answer: ${correctAnswer}`);
     setTimeout(() => setMessage(''), 3000);
   };
 
   const handleAddQuestion = async (newQuestion) => {
     const created = await jeopardyService.createQuestion(id, newQuestion);
     if (created) {
-      setGame((prev) => ({
-        ...prev,
-        questions: [...prev.questions, created],
-      }));
+      setGame({ ...game, questions: [...game.questions, created] });
     }
   };
 
   const handleDeleteGame = async () => {
-    const success = await jeopardyService.deleteGame(id);
-    if (success) {
-      navigate('/jeopardy');
+    if (await jeopardyService.deleteGame(id)) navigate('/jeopardy');
+  };
+
+  const handleDeleteQuestion = async (questionId) => {
+    if (await jeopardyService.deleteQuestion(id, questionId)) {
+      setGame({ ...game, questions: game.questions.filter(q => q._id !== questionId) });
     }
   };
 
-  if (!game) return <p>Loading game details...</p>;
+  if (!game) return <p>Loading...</p>;
 
   return (
     <main>
       <h1>{game.title}</h1>
-      <p><strong>Description:</strong> {game.description || 'No description provided'}</p>
-      <h3>Total Score: {score}</h3>
-      {message && <p style={{ color: message.includes('Correct') ? 'green' : 'red' }}>{message}</p>}
+      <p><strong>Description:</strong> {game.description}</p>
+      <h3>Score: {score}</h3>
+      {message && <p style={{ color: message.includes('✅') ? 'green' : 'red' }}>{message}</p>}
 
       {isGameOwner && (
-        <button onClick={handleDeleteGame} style={{ marginBottom: '20px' }}>
-          Delete Game
-        </button>
+        <>
+          <button onClick={handleDeleteGame}>Delete Game</button>
+          <section>
+            <h2>Add a Question</h2>
+            <QuestionForm handleAddQuestion={handleAddQuestion} />
+          </section>
+        </>
       )}
 
-      {isGameOwner && (
-        <section>
-          <h2>Add a Question</h2>
-          <QuestionForm handleAddQuestion={handleAddQuestion} />
-        </section>
-      )}
-
-      {game.questions?.length ? (
-        <div>
-          <h2>Questions</h2>
-          <ul>
-            {game.questions.map((q) => {
-              const selected = answers[q._id];
-              const isCorrect = selected === q.correctAnswer;
-
-              return (
-                <li key={q._id} style={{ marginBottom: '20px' }}>
-                  <strong>Q:</strong> {q.questionText}<br />
-                  <strong>Points:</strong> {q.points}<br />
-                  <strong>Category:</strong> {q.category}<br />
-
-                  {q.options.map((opt, i) => (
-                    <button
-                      key={i}
-                      disabled={!!selected}
-                      onClick={() => handleAnswer(q._id, opt, q.correctAnswer, q.points)}
-                      style={{ marginRight: '8px', padding: '4px 8px' }}
-                    >
-                      {opt}
-                    </button>
-                  ))}
-
-                  {selected && (
-                    <p style={{ color: isCorrect ? 'green' : 'red' }}>
-                      {isCorrect ? '✅ Correct!' : `❌ Wrong! Correct: ${q.correctAnswer}`}
-                    </p>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+      <h2>Questions</h2>
+      {game.questions.length === 0 ? (
+        <p>No questions added yet.</p>
       ) : (
-        <p>No questions added to this game.</p>
+        <ul>
+          {game.questions.map((q) => {
+            const selected = answers[q._id];
+            const isCorrect = selected === q.correctAnswer;
+            return (
+              <li key={q._id}>
+                <p><strong>Q:</strong> {q.questionText}</p>
+                <p><strong>Category:</strong> {q.category} | <strong>Points:</strong> {q.points}</p>
+                {q.options.map((opt, i) => (
+                  <button
+                    key={i}
+                    disabled={!!selected}
+                    onClick={() => handleAnswer(q._id, opt, q.correctAnswer, q.points)}
+                  >
+                    {opt}
+                  </button>
+                ))}
+                {selected && (
+                  <p style={{ color: isCorrect ? 'green' : 'red' }}>
+                    {isCorrect ? '✅ Correct!' : `❌ Wrong! Correct: ${q.correctAnswer}`}
+                  </p>
+                )}
+                {isGameOwner && (
+                  <div>
+                    <Link to={`/jeopardy/${id}/questions/${q._id}/edit`}>Edit</Link>
+                    <button onClick={() => handleDeleteQuestion(q._id)}>Delete</button>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       )}
     </main>
   );
