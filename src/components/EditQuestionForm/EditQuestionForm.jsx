@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import * as jeopardyService from '../../services/jeopradyService';
+import styles from './EditQuestionForm.module.css';
 
 export default function EditQuestionForm() {
   const { id: gameId, questionId } = useParams();
@@ -47,9 +48,9 @@ export default function EditQuestionForm() {
   };
 
   return (
-    <main>
+    <main className={styles.container}>
       <h1>Edit Question</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={styles.formCard}>
         <label>Question Text</label>
         <textarea
           name="questionText"
