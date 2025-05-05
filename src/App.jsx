@@ -9,7 +9,9 @@ import JeopardyList from './components/JeopradyList/JeopardyList';
 import * as jeopardyService from './services/jeopradyService';
 import GameDetails from './components/GameDetails/GameDetails';
 import GameForm from './components/GameForm/GameForm';
+import EditQuestionForm from './components/EditQuestionForm/EditQuestionForm'; 
 import { UserContext } from './contexts/UserContext';
+
 
 const App = () => {
   const { user } = useContext(UserContext);
@@ -50,6 +52,7 @@ const App = () => {
             <Route path='/jeopardy' element={<JeopardyList jeopardy={jeopardy} />} />
             <Route path='/jeoprady/new' element={<GameForm handleAddGame={handleAddGame} />} />
             <Route path='/jeopardy/:id' element={<GameDetails handleDeleteGame={handleDeleteGame} />} />
+            <Route path='/jeopardy/:id/questions/:questionId/edit' element={<EditQuestionForm />} /> {/* ✅ New route */}
           </>
         ) : (
           <>

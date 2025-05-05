@@ -100,4 +100,27 @@ const deleteQuestion = async (gameId, questionId) => {
   }
 };
 
-export { index, show, create, createQuestion, deleteGame, deleteQuestion };
+const updateQuestion = async (gameId, questionId, questionData) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${gameId}/questions/${questionId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(questionData),
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to update question');
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error updating question:', error);
+    return null;
+  }
+};
+
+
+export { index, show, create, createQuestion, deleteGame, deleteQuestion, updateQuestion };

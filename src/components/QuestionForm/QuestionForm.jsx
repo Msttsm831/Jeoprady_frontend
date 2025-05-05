@@ -63,7 +63,7 @@ const QuestionForm = ({ handleAddQuestion }) => {
 
     try {
       if (jeopardyId && questionId) {
-        await jeopardyService.updateQuestion(jeopardyId, questionId, questionData);
+        await jeopardyService.editQuestion(jeopardyId, questionId, questionData);
         navigate(`/jeopardy/${jeopardyId}`);
       } else {
         handleAddQuestion(questionData);
