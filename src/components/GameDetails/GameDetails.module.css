@@ -1,0 +1,96 @@
+
+.main {
+    padding: 30px;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .title {
+    font-size: 36px;
+    font-weight: bold;
+    text-shadow: 0 0 8px #a088fc;
+  }
+  
+  .description {
+    font-size: 18px;
+    color: #ccc;
+    margin-top: 10px;
+    text-shadow: 0 0 4px #5d4ca1;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+  
+  .leftPanel {
+    flex: 1;
+    min-width: 300px;
+    margin-right: 20px;
+  }
+  
+  .rightPanel {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 20px;
+  }
+  
+  .deleteBtn {
+    background-color: #ff4a4a;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .deleteBtn:hover {
+    background-color: #cc0000;
+  }
+  
+  .scoreBox {
+    text-align: right;
+  }
+  
+  .feedback {
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 0 0 3px white;
+  }
+  
+  .playBtn {
+    padding: 12px 25px;
+    background-color: #a088fc;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 0 10px #a088fc;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .playBtn:hover {
+    background-color: #8a6cf1;
+  }
+  
+  .questionGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    justify-content: center;
+  }
+  

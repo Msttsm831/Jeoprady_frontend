@@ -4,7 +4,7 @@ import { UserContext } from '../../contexts/UserContext';
 import styles from './NavBar.module.css';
 
 const NavBar = () => {
-  const { user, handleLogout } = useContext(UserContext);
+  const { user, handleSignOut } = useContext(UserContext);
 
   return (
     <nav className={styles.container}>
@@ -15,7 +15,7 @@ const NavBar = () => {
           <>
             <li><Link to="/jeopardy">Jeopardy</Link></li>
             <li><Link to="/jeoprady/new">New Jeoprady</Link></li>
-            <li><span onClick={handleLogout}>Sign Out</span></li>
+            <li><span onClick={handleSignOut}>Sign Out</span></li>
           </>
         ) : (
           <>
