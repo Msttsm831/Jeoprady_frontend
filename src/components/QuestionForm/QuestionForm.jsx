@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import * as jeopardyService from '../../services/jeopradyService';
+import styles from './QuestionForm.module.css';
 
 const QuestionForm = ({ handleAddQuestion }) => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,8 @@ const QuestionForm = ({ handleAddQuestion }) => {
     category: ''
   });
 
+  const [showForm, setShowForm] = useState(false);
+  const [feedback, setFeedback] = useState('');
   const { jeopardyId, questionId } = useParams();
   const navigate = useNavigate();
 
@@ -28,6 +31,7 @@ const QuestionForm = ({ handleAddQuestion }) => {
               points: existingQuestion.points,
               category: existingQuestion.category
             });
+            setShowForm(true);
           }
         }
       } catch (err) {
@@ -49,7 +53,7 @@ const QuestionForm = ({ handleAddQuestion }) => {
       .filter(opt => opt);
 
     if (optionsArray.length < 2) {
-      alert('Please enter at least two options separated by commas.');
+      setFeedback('Please enter at least two options.');
       return;
     }
 
@@ -74,66 +78,81 @@ const QuestionForm = ({ handleAddQuestion }) => {
           points: 100,
           category: ''
         });
+        setFeedback('✅ Question added!');
       }
     } catch (error) {
       console.error('Error submitting question:', error);
+      setFeedback('❌ Failed to submit the question.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor='questionText'>Question:</label>
-      <textarea
-        required
-        name='questionText'
-        id='questionText'
-        value={formData.questionText}
-        onChange={handleChange}
-      />
+    <div className={styles.formContainer}>
+      {!showForm ? (
+        <button onClick={() => setShowForm(true)} className={styles.formCardButton}>
+          + Add Question
+        </button>
+      ) : (
+        <form onSubmit={handleSubmit} className={styles.formCard}>
+          <label htmlFor='questionText'>Question:</label>
+          <textarea
+            required
+            name='questionText'
+            id='questionText'
+            value={formData.questionText}
+            onChange={handleChange}
+          />
 
-      <label htmlFor='options'>Options (comma-separated):</label>
-      <input
-        required
-        type='text'
-        name='options'
-        id='options'
-        placeholder='Option 1, Option 2, Option 3...'
-        value={formData.options}
-        onChange={handleChange}
-      />
+          <label htmlFor='options'>Options (comma-separated):</label>
+          <input
+            required
+            type='text'
+            name='options'
+            id='options'
+            placeholder='Option 1, Option 2, Option 3...'
+            value={formData.options}
+            onChange={handleChange}
+          />
 
-      <label htmlFor='correctAnswer'>Correct Answer:</label>
-      <input
-        required
-        type='text'
-        name='correctAnswer'
-        id='correctAnswer'
-        value={formData.correctAnswer}
-        onChange={handleChange}
-      />
+          <label htmlFor='correctAnswer'>Correct Answer:</label>
+          <input
+            required
+            type='text'
+            name='correctAnswer'
+            id='correctAnswer'
+            value={formData.correctAnswer}
+            onChange={handleChange}
+          />
 
-      <label htmlFor='points'>Points:</label>
-      <input
-        required
-        type='number'
-        name='points'
-        id='points'
-        value={formData.points}
-        onChange={handleChange}
-      />
+          <label htmlFor='points'>Points:</label>
+          <input
+            required
+            type='number'
+            name='points'
+            id='points'
+            value={formData.points}
+            onChange={handleChange}
+          />
 
-      <label htmlFor='category'>Category:</label>
-      <input
-        required
-        type='text'
-        name='category'
-        id='category'
-        value={formData.category}
-        onChange={handleChange}
-      />
+          <label htmlFor='category'>Category:</label>
+          <input
+            required
+            type='text'
+            name='category'
+            id='category'
+            value={formData.category}
+            onChange={handleChange}
+          />
 
-      <button type='submit'>{questionId ? 'Update' : 'Submit'} Question</button>
-    </form>
+          <button type='submit'>{questionId ? 'Update' : 'Submit'} Question</button>
+          {feedback && (
+            <p className={`${styles.feedbackMessage} ${feedback.startsWith('✅') ? styles.success : styles.error}`}>
+              {feedback}
+            </p>
+          )}
+        </form>
+      )}
+    </div>
   );
 };
 

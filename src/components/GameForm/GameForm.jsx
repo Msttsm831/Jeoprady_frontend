@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import * as jeopradyService from '../../services/jeopradyService'; 
+import * as jeopradyService from '../../services/jeopradyService';
+import styles from './GameForm.module.css';
 
 const GameForm = ({ handleAddGame }) => {
   const [formData, setFormData] = useState({
@@ -23,7 +24,7 @@ const GameForm = ({ handleAddGame }) => {
       if (createdGame) {
         setSuccessMessage('Game created successfully!');
         setFormData({ title: '', description: '', category: 'General' });
-        handleAddGame(createdGame); 
+        handleAddGame(createdGame);
       } else {
         setError('Failed to create game. Please try again.');
       }
@@ -34,26 +35,33 @@ const GameForm = ({ handleAddGame }) => {
   };
 
   return (
-    <main>
-      <form onSubmit={handleSubmit}>
-        <label>Title</label>
+    <main className={styles.container}>
+      <form onSubmit={handleSubmit} className={styles.formCard}>
+        <h2 className={styles.title}>Create a New Jeoprady Game</h2>
+
+        <label className={styles.label}>Title</label>
         <input
           type='text'
           name='title'
           required
+          className={styles.input}
           value={formData.title}
           onChange={handleChange}
         />
-        <label>Description</label>
+
+        <label className={styles.label}>Description</label>
         <textarea
           name='description'
           required
+          className={styles.textarea}
           value={formData.description}
           onChange={handleChange}
         />
-        <label>Category</label>
+
+        <label className={styles.label}>Category</label>
         <select
           name='category'
+          className={styles.select}
           value={formData.category}
           onChange={handleChange}
         >
@@ -63,11 +71,12 @@ const GameForm = ({ handleAddGame }) => {
           <option value='History'>History</option>
           <option value='Sports'>Sports</option>
         </select>
-        <button type='submit'>Create Game</button>
+
+        <button type='submit' className={styles.button}>Create Game</button>
+
+        {error && <p className={styles.error}>{error}</p>}
+        {successMessage && <p className={styles.success}>{successMessage}</p>}
       </form>
-      
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
     </main>
   );
 };
