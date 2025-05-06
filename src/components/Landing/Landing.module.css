@@ -1,0 +1,38 @@
+.container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    text-align: center;
+  }
+  .textContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 13rem 8rem;
+    ;
+  }
+
+  .title {
+    font-size: 64px;
+    font-family: 'Press Start 2P', monospace;
+    color: #a088fc;
+    text-shadow: 
+      0 0 5px #a088fc,
+      0 0 10px #a088fc,
+      0 0 20px #a088fc;
+  }
+
+  .subtitle {
+    margin-top: 20px;
+    font-size: 18px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #fff;
+    opacity: 0.7;
+    text-shadow:
+      0 0 2px #fff,
+      0 0 4px #a088fc,
+      0 0 6px #a088fc;
+  }

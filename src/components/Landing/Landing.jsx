@@ -1,9 +1,12 @@
-const Landing = () => {
-    return (
-        <main>
-            <h1>Landing Page</h1>
-        </main>
-    )
-}
+import styles from './Landing.module.css';
 
-export default Landing
+const Landing = () => {
+  return (
+        <div className={styles.textContainer}>
+      <h1 className={styles.title}>Jeoprady</h1>
+      <h2 className={styles.subtitle}>And yes it is misspelled.</h2>
+      </div>
+  );
+};
+
+export default Landing;
